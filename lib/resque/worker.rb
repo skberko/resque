@@ -231,6 +231,8 @@ module Resque
     # Also accepts a block which will be passed the job as soon as it
     # has completed processing. Useful for testing.
     def work(interval = 5.0, &block)
+      require 'byebug'; byebug
+      puts "HELLO OUT THERE"
       interval = Float(interval)
       startup
 
