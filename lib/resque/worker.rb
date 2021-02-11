@@ -225,8 +225,6 @@ module Resque
     # Also accepts a block which will be passed the job as soon as it
     # has completed processing. Useful for testing.
     def work(interval = 5.0, &block)
-      require 'byebug'; byebug
-      puts "HELLO HELLO SKB"
       interval = Float(interval)
       startup
 
@@ -249,11 +247,10 @@ module Resque
     end
 
     def work_one_job(job = nil, &block)
-      require 'byebug'; byebug
-      puts "HELLO HELLO SKB"
-
       return false if paused?
       return false unless job ||= reserve
+
+      Rails.logger.info("mrj_chaos: Worker.work_one_job called for a MailRenderingJob") if job.payload["class"] == "MailRenderingJob"
 
       working_on job
       procline "Processing #{job.queue} since #{Time.now.to_i} [#{job.payload_class_name}]"
@@ -309,6 +306,7 @@ module Resque
         job.perform
       rescue Object => e
         report_failed_job(job,e)
+        Rails.logger.info("mrj_chaos: Worker#perform errored: #{e}")
       else
         log_with_severity :info, "done: #{job.inspect}"
       ensure
@@ -322,6 +320,7 @@ module Resque
       queues.each do |queue|
         log_with_severity :debug, "Checking #{queue}"
         if job = Resque.reserve(queue)
+          Rails.logger.info("mrj_chaos: Worker#reserve MRJ: Found job for outbound_mail queue") if queue == "outbound_mail"
           log_with_severity :debug, "Found job on #{queue}"
           return job
         end

@@ -116,6 +116,10 @@ module Resque
         @redis = redis
       end
       def push_to_queue(queue,encoded_item)
+        if queue.to_s == "outbound_mail"
+          Rails.logger.info("mrj_chaos: QueueAccess#push_to_queue called for outbound_mail queue. encoded_item: #{encoded_item}")
+        end
+
         @redis.pipelined do
           watch_queue(queue)
           @redis.rpush redis_key_for_queue(queue), encoded_item
@@ -124,6 +128,7 @@ module Resque
 
       # Pop whatever is on queue
       def pop_from_queue(queue)
+        Rails.logger.info("mrj_chaos: QueueAccess#pop_from_queue called for #{queue}") if queue.to_s == "outbound_mail"
         @redis.lpop(redis_key_for_queue(queue))
       end
 

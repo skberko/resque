@@ -275,6 +275,7 @@ module Resque
   #
   # Returns a Ruby object.
   def pop(queue)
+    Rails.logger.info("mrj_chaos: Resque#pop: Seeing if there is a job to pop from #{queue} queue") if queue == "outbound_mail"
     decode(data_store.pop_from_queue(queue))
   end
 

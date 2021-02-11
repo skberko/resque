@@ -48,7 +48,7 @@ module Resque
     def self.decode(object)
       Resque.decode(object)
     end
-    
+
     # Given a word with dashes, returns a camel cased version of it.
     def classify(dashed_word)
       Resque.classify(dashed_word)
@@ -149,6 +149,7 @@ module Resque
     # arguments given in the payload.
     def perform
       job = payload_class
+      Rails.logger.info("mrj_chaos: Job#perform called for a MailRenderingJob") if job == MailRenderingJob
       job_args = args || []
       job_was_performed = false
 
