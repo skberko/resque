@@ -225,6 +225,8 @@ module Resque
     # Also accepts a block which will be passed the job as soon as it
     # has completed processing. Useful for testing.
     def work(interval = 5.0, &block)
+      require 'byebug'; byebug
+      puts "HELLO HELLO SKB"
       interval = Float(interval)
       startup
 
@@ -247,6 +249,9 @@ module Resque
     end
 
     def work_one_job(job = nil, &block)
+      require 'byebug'; byebug
+      puts "HELLO HELLO SKB"
+
       return false if paused?
       return false unless job ||= reserve
 
